@@ -12,7 +12,7 @@ const root = path.dirname(fileURLToPath(import.meta.url))
 
 export function pathsFor(home = os.homedir()) {
   const directory = path.join(home, ".config", "magpie-tinycast")
-  return {control: path.join(directory, "connection.json"), state: path.join(directory, "state.json"), status: path.join(directory, "status.json"), lock: path.join(directory, "sync.lock")}
+  return {control: path.join(directory, "connection.json"), state: path.join(directory, "state.json"), lock: path.join(directory, "sync.lock")}
 }
 
 function read(file) {
@@ -94,9 +94,6 @@ export function native(request) {
 
 export function sync(paths = pathsFor(), call = native) {
   privateDirectory(path.dirname(paths.control))
-  const control = read(paths.control)
-  let state = read(paths.state)
-  if (!state && control?.enabled !== true) return {status: "disconnected"}
   try {
     fs.writeFileSync(paths.lock, String(process.pid), {flag: "wx", mode: 0o600})
   } catch (error) {
@@ -108,7 +105,9 @@ export function sync(paths = pathsFor(), call = native) {
     return sync(paths, call)
   }
   try {
-    state = read(paths.state)
+    const control = read(paths.control)
+    const state = read(paths.state)
+    if (!state && control?.enabled !== true) return {status: "disconnected"}
     const snapshot = call({action: "read"})
     if (snapshot.error) throw new Error(snapshot.error)
     const operation = plan(snapshot, state, control)
@@ -132,30 +131,4 @@ export function sync(paths = pathsFor(), call = native) {
   } finally {
     fs.unlinkSync(paths.lock)
   }
-}
-
-export function start(paths = pathsFor()) {
-  let signature = null
-  let retry = true
-  let previous = null
-  const tick = () => {
-    try {
-      const current = fs.existsSync(paths.control) ? fs.readFileSync(paths.control, "utf8") : ""
-      if (current === signature && !retry) return
-      const result = sync(paths)
-      signature = current
-      retry = ["waiting_for_tinycast_to_quit", "ready_to_start", "busy"].includes(result.status)
-      const text = JSON.stringify(result)
-      if (text !== previous) { write(paths.status, result); previous = text }
-    } catch (error) {
-      retry = true
-      const result = {status: "error", message: error.message}
-      const text = JSON.stringify(result)
-      if (text !== previous) { write(paths.status, result); console.error(`[tinycast] ${error.message}`); previous = text }
-    }
-  }
-  tick()
-  const timer = setInterval(tick, 3000)
-  timer.unref?.()
-  return () => { clearInterval(timer); tick() }
 }

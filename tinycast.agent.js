@@ -6,7 +6,7 @@ export const agent = {
   config: "~/.config/magpie-tinycast/connection.json",
   format: "json",
   ua: ["Tinycast"],
-  notice: "⚠️ Tinycast needs a full restart to load connection changes. Quit from its menu-bar icon (⌘Q only closes its window), wait a few seconds, then reopen it. No API key or Keychain password is needed."
+  notice: "Quit Tinycast from its menu-bar icon, run npm run sync in magpie-agent-tinycast, then reopen Tinycast. ／ 請從選單列完整退出 Tinycast，在 magpie-agent-tinycast 套件目錄執行 npm run sync，再開啟 Tinycast。"
 }
 
 export function connect({gateway, models}) {

@@ -1,10 +1,9 @@
 {
   "name": "magpie-agent-tinycast",
-  "version": "0.2.0",
-  "description": "Tinycast AI as a Magpie agent, with keyless localhost model synchronization",
+  "version": "0.3.0",
+  "description": "Use Magpie models in Tinycast through its keyless local gateway",
   "type": "module",
-  "main": "./index.mjs",
-  "files": ["tinycast.agent.js", "index.mjs", "bridge.mjs", "service.mjs", "native.swift", "bin", "scripts", "page", "brand", "README.md", "CHANGELOG.md", "VALIDATION.md", "LICENSE", "THIRD_PARTY.md"],
+  "files": ["tinycast.agent.js", "bridge.mjs", "native.swift", "bin", "scripts", "brand", "README.md", "CHANGELOG.md", "VALIDATION.md", "LICENSE", "THIRD_PARTY.md"],
   "keywords": ["magpie", "magpie-plugin", "magpie-agent", "tinycast"],
   "license": "AGPL-3.0-or-later",
   "repository": {"type": "git", "url": "git+https://github.com/BaksiLi/magpie-agent-tinycast.git"},
@@ -15,19 +14,16 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test test/*.test.mjs",
-    "check": "node scripts/doctor.mjs"
+    "check": "node scripts/doctor.mjs",
+    "sync": "node scripts/doctor.mjs --sync"
   },
   "magpie": {
     "name": "Tinycast",
     "agent": "./tinycast.agent.js",
     "icon": "https://raw.githubusercontent.com/BaksiLi/magpie-agent-tinycast/main/brand/icon.svg",
     "summary": {
-      "en": "Use Magpie models in Tinycast. Keyless localhost setup, automatic model sync, and a persistent restart indicator.",
-      "zh": "在 Tinycast 使用 Magpie 模型：本機免金鑰、自動同步模型，並持續顯示重啟狀態。"
-    },
-    "page": {"title": "Tinycast", "file": "page/index.html", "icon": "page/icon.svg", "service": {"port": 3497, "option": "port"}},
-    "panels": [{"slot": "agents", "file": "page/index.html", "title": "Tinycast connection"}],
-    "options": {"port": 3497},
-    "permissions": []
+      "en": "Use Magpie models in Tinycast through a keyless local connection.",
+      "zh": "透過本機免金鑰連線，在 Tinycast 使用 Magpie 模型。"
+    }
   }
 }
